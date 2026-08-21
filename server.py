@@ -104,6 +104,14 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_header("Cache-Control", "no-store")
         super().end_headers()
 
+    # The vendored libraries are served from this same folder, and a
+    # module Chrome receives as application/octet-stream is refused, so
+    # the two types the vendor tree needs are stated outright rather
+    # than left to whatever /etc/mime.types the machine happens to have.
+    extensions_map = {**SimpleHTTPRequestHandler.extensions_map,
+                      ".mjs": "text/javascript",
+                      ".wasm": "application/wasm"}
+
     def __init__(self, *a, **k):
         super().__init__(*a, directory=str(HERE), **k)
 
